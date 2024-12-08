@@ -1,4 +1,4 @@
-package com.iris.restWebServices.rest_web_services;
+package com.iris.restWebServices.rest_web_services.helloWorld;
 
 
 import org.springframework.web.bind.annotation.GetMapping;
