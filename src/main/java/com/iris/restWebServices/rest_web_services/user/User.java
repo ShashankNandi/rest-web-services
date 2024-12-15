@@ -4,7 +4,6 @@ import java.security.PrivateKey;
 import java.util.Date;
 
 public class User {
-
     private String username;
     private Integer id;
     private Date birthDate;

@@ -38,11 +38,19 @@ public class UserDAO {
     }
 
     public User addUser(User user) {
-//        if(user.getId()==null){
-            user.setId(++usersCount);
-//        }
-
+        user.setId(++usersCount);
         users.add(user);
         return user;
+    }
+
+    public boolean deleteUser(int  id) {
+        for(User user : users) {
+            if(user.getId() == id) {
+                User userToRemove = user;
+                boolean userRemoved=users.remove(userToRemove);
+                return userRemoved;
+            }
+        }
+        return false;
     }
 }

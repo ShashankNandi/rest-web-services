@@ -1,5 +1,6 @@
 package com.iris.restWebServices.rest_web_services.user;
 
+import com.iris.restWebServices.rest_web_services.Exception.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,7 +24,26 @@ public class UserController {
 
     @GetMapping("/users/{id}")
     public User getUserById(@PathVariable int id) {
-        return userDAO.getUser(id);
+
+        User user =userDAO.getUser(id);
+        if(user==null) {
+            throw new UserNotFoundException("id - " + id);
+        }else {
+            return user;
+        }
+
+    }
+
+    @DeleteMapping("users/{id}")
+    public ResponseEntity<Void> deleteUser(@PathVariable int id) {
+        boolean userRemoved = userDAO.deleteUser(id);
+
+        if(userRemoved) {
+            return ResponseEntity.noContent().build(); //return 204 on successfiull deletion
+        }else{
+            throw new UserNotFoundException("id - " + id);
+        }
+
     }
 
     @PostMapping("/users")
