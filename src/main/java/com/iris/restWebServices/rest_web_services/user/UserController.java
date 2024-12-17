@@ -1,12 +1,19 @@
 package com.iris.restWebServices.rest_web_services.user;
 
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*; // Static import for convenience
+
+
 import com.iris.restWebServices.rest_web_services.Exception.UserNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+
 
 import java.net.URI;
 import java.util.List;
@@ -25,13 +32,21 @@ public class UserController {
 
 
     @GetMapping("/users/{id}")
-    public User getUserById(@PathVariable int id) {
+    public EntityModel<User> getUserById(@PathVariable int id) {
 
         User user =userDAO.getUser(id);
         if(user==null) {
             throw new UserNotFoundException("id - " + id);
         }else {
-            return user;
+            // Create the EntityModel and add self link
+            EntityModel<User> entityModel = EntityModel.of(user);
+//
+//            // Build the self link
+//            entityModel.add(linkTo(methodOn(UserController.class).getUserById(id)).withSelfRel());
+
+            // Add other links as needed (e.g., link to all users)
+            entityModel.add(linkTo(methodOn(UserController.class).getAllUsers()).withRel("get-all-users"));
+            return entityModel;
         }
 
     }
