@@ -5,6 +5,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*; // Sta
 
 
 import com.iris.restWebServices.rest_web_services.Exception.UserNotFoundException;
+import com.iris.restWebServices.rest_web_services.post.Post;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.EntityModel;
@@ -69,5 +70,8 @@ public class UserController {
         URI location = ServletUriComponentsBuilder.fromCurrentContextPath().path("/{Id}").buildAndExpand(user.getId()).toUri();
         return ResponseEntity.created(location).build();
     }
+
+
+
 
 }

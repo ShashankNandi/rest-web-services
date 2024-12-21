@@ -1,14 +1,13 @@
 package com.iris.restWebServices.rest_web_services.user;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.iris.restWebServices.rest_web_services.post.Post;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Size;
 
 import java.security.PrivateKey;
 import java.util.Date;
+import java.util.List;
 
 
 @Entity
@@ -26,6 +25,11 @@ public class User {
 
     @Past
     private Date birthDate;
+
+    @OneToMany(mappedBy = "user")
+    private List<Post> posts;
+
+
 
     public User() {}
 
@@ -57,6 +61,15 @@ public class User {
 
     public void setBirthDate(Date birthDate) {
         this.birthDate = birthDate;
+    }
+
+
+    public List<Post> getPosts() {
+        return posts;
+    }
+
+    public void setPosts(List<Post> posts) {
+        this.posts = posts;
     }
 
     @Override

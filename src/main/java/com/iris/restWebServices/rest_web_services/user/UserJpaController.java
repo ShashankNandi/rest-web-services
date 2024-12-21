@@ -5,6 +5,9 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*; // Sta
 
 
 import com.iris.restWebServices.rest_web_services.Exception.UserNotFoundException;
+import com.iris.restWebServices.rest_web_services.post.Post;
+import com.iris.restWebServices.rest_web_services.post.PostRepository;
+import jakarta.persistence.OneToMany;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.EntityModel;
@@ -27,6 +30,8 @@ public class UserJpaController {
 
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private PostRepository postRepository;
 
 
     @GetMapping("/jpa/users")
@@ -71,4 +76,22 @@ public class UserJpaController {
         return ResponseEntity.created(location).build();
     }
 
+    @GetMapping("/jpa/users/{id}/posts")
+    public List<Post> getAllPostsForUser(@PathVariable int id) {
+        Optional<User> user =userRepository.findById(id);
+        if(!user.isPresent()) {
+            throw new UserNotFoundException("id - " + id);
+        }
+        return user.get().getPosts();
+    }
+
+
+    @PostMapping("/jpa/posts/{userId}")
+    public String createPost(@PathVariable int userId, @RequestBody Post post) {
+        User user = userRepository.findById(userId).get();
+
+        post.setUser(user);
+        postRepository.save(post);
+        return "post uploaded";
+    }
 }
