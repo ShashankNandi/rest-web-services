@@ -19,6 +19,5 @@ public class HelloWorldController {
 
         return new HelloWorldBean(  String.format("Hello %s!", name));
 
-
     }
 }

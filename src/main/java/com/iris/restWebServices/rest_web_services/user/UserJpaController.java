@@ -17,45 +17,49 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
-public class UserController {
+public class UserJpaController {
 
     @Autowired
     private UserDAO userDAO;
 
+    @Autowired
+    private UserRepository userRepository;
 
-    @GetMapping("/users")
+
+    @GetMapping("/jpa/users")
     public List<User> getAllUsers() {
-        return userDAO.getAllUser();
+
+        return userRepository.findAll();
     }
 
 
-    @GetMapping("/users/{id}")
+    @GetMapping("/jpa/users/{id}")
     public EntityModel<User> getUserById(@PathVariable int id) {
 
-        User user =userDAO.getUser(id);
-        if(user==null) {
+        Optional<User> user =userRepository.findById(id);
+        if(!user.isPresent()) {
             throw new UserNotFoundException("id - " + id);
         }else {
             // Create the EntityModel and add self link
-            EntityModel<User> entityModel = EntityModel.of(user);
+            EntityModel<User> entityModel = EntityModel.of(user.get());
 //
 //            // Build the self link
 //            entityModel.add(linkTo(methodOn(UserController.class).getUserById(id)).withSelfRel());
 
             // Add other links as needed (e.g., link to all users)
-            entityModel.add(linkTo(methodOn(UserController.class).getAllUsers()).withRel("get-all-users"));
+            entityModel.add(linkTo(methodOn(UserJpaController.class).getAllUsers()).withRel("get-all-users"));
             return entityModel;
         }
 
     }
 
-    @DeleteMapping("users/{id}")
+    @DeleteMapping("jpa/users/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable int id) {
-        boolean userRemoved = userDAO.deleteUser(id);
-
-        if(userRemoved) {
+        if(!userRepository.existsById(id)) {
+            userRepository.deleteById(id);
             return ResponseEntity.noContent().build(); //return 204 on successfiull deletion
         }else{
             throw new UserNotFoundException("id - " + id);
@@ -63,9 +67,9 @@ public class UserController {
 
     }
 
-    @PostMapping("/users")
+    @PostMapping("/jpa/users")
     public ResponseEntity<User> createUser(@Valid @RequestBody User user) {
-        User createdUser = userDAO.addUser(user);
+        User createdUser = userRepository.save(user);
         URI location = ServletUriComponentsBuilder.fromCurrentContextPath().path("/{Id}").buildAndExpand(user.getId()).toUri();
         return ResponseEntity.created(location).build();
     }
