@@ -57,13 +57,10 @@ public class UserJpaController {
     }
 
     @DeleteMapping("jpa/users/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable int id) {
-        if(!userRepository.existsById(id)) {
+    public void deleteUser(@PathVariable int id) {
+
             userRepository.deleteById(id);
-            return ResponseEntity.noContent().build(); //return 204 on successfiull deletion
-        }else{
-            throw new UserNotFoundException("id - " + id);
-        }
+
 
     }
 
